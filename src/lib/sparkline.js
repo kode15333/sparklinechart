@@ -3,9 +3,7 @@ function getY(max, height, diff, value) {
 }
 
 function removeChildren(svg) {
-    ;[...svg.querySelectorAll("*")].forEach((element) =>
-        svg.removeChild(element)
-    )
+    ;[...svg.child("*")].forEach((element) => svg.removeChild(element))
 }
 
 function defaultFetch(entry) {
@@ -166,19 +164,22 @@ export function sparkline(svg, entries, options) {
     })
     svg.appendChild(interactionLayer)
 
-    interactionLayer.addEventListener("mouseout", (event) => {
-        cursor.setAttribute("x1", offscreen)
-        cursor.setAttribute("x2", offscreen)
+    const handleMouseMove = (e) => {
+        const { offsetX, offsetY } = e
+        draw({ x: offsetX, y: offsetY })
+    }
 
-        spot.setAttribute("cx", offscreen)
-
-        if (onmouseout) {
-            onmouseout(event)
+    const handleTouchMove = (e) => {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const position = {
+            x: e.touches[0].clientX - rect.left,
+            y: e.touches[0].clientY - rect.top,
         }
-    })
+        draw(e, position)
+    }
 
-    interactionLayer.addEventListener("mousemove", (event) => {
-        const mouseX = event.offsetX
+    const draw = (e, position) => {
+        const mouseX = position.x
 
         let nextDataPoint = datapoints.find((entry) => {
             return entry.x >= mouseX
@@ -215,7 +216,27 @@ export function sparkline(svg, entries, options) {
         if (onmousemove) {
             onmousemove(event, currentDataPoint)
         }
-    })
+    }
+
+    const drawEnd = (e) => {
+        cursor.setAttribute("x1", offscreen)
+        cursor.setAttribute("x2", offscreen)
+
+        spot.setAttribute("cx", offscreen)
+
+        if (onmouseout) {
+            onmouseout(e)
+        }
+    }
+
+    interactionLayer.addEventListener("mousedown", () => {})
+    interactionLayer.addEventListener("mousemove", handleMouseMove)
+    interactionLayer.addEventListener("mouseup", handleMouseMove)
+    interactionLayer.addEventListener("mouseout", drawEnd)
+    interactionLayer.addEventListener("mouseleave", drawEnd)
+    interactionLayer.addEventListener("touchstart", () => {})
+    interactionLayer.addEventListener("touchmove", handleTouchMove)
+    interactionLayer.addEventListener("touchend", drawEnd)
 }
 
 export default sparkline
