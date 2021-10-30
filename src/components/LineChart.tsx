@@ -1,28 +1,31 @@
-import React, { useEffect, useRef } from "react"
+import React, { useRef } from "react"
 import styled from "styled-components"
-import * as d3 from "d3"
 import { useWindowSize } from "./useWindowSize"
-import Chart from "./Chart"
+import Chart from "./Chart/Chart"
 
-type DataType = {
-    value: number
-    date: Date
-}
 const LineChart = () => {
     const divRef = useRef<HTMLDivElement>(null)
     const [width, height] = useWindowSize<HTMLDivElement>(divRef)
-    useEffect(() => {
-        d3.select("#chart").append("svg")
-    }, [])
 
-    const data: DataType[] = [
-        { value: 1, date: new Date() },
-        { value: 1, date: new Date() },
-        { value: 1, date: new Date() },
+    const data = [
+        { name: "Ethereum", date: "2017-01-01", value: 8.3 },
+        { name: "Ethereum", date: "2017-02-01", value: 10.57 },
+        { name: "Ethereum", date: "2017-03-01", value: 15.73 },
+        { name: "Ethereum", date: "2017-04-01", value: 49.51 },
+        { name: "Ethereum", date: "2017-05-01", value: 85.69 },
+        { name: "Ethereum", date: "2017-06-01", value: 226.51 },
+        { name: "Ethereum", date: "2017-07-01", value: 246.65 },
+        { name: "Ethereum", date: "2017-08-01", value: 213.87 },
+        { name: "Ethereum", date: "2017-09-01", value: 386.61 },
+        { name: "Ethereum", date: "2017-10-01", value: 303.56 },
+        { name: "Ethereum", date: "2017-11-01", value: 298.21 },
     ]
+
+    const data1 = [1, 2, 3, 56, 45, 44]
     return (
-        <Containter id="chart" ref={divRef}>
+        <Container id="chart" ref={divRef}>
             <Chart
+                id={"chart"}
                 data={data}
                 width={width}
                 height={height}
@@ -30,13 +33,13 @@ const LineChart = () => {
                 strokeWidth={2}
                 spotRadius={2}
             />
-        </Containter>
+        </Container>
     )
 }
 
 export default LineChart
 
-const Containter = styled.div`
+const Container = styled.div`
     width: 100%;
     height: 100%;
 `
