@@ -38,7 +38,7 @@ const LineChart = () => {
                 strokeWidth={2}
                 spotRadius={2}
                 fill={"rgba(244,255,255, 1)"}
-                interactive={false}
+                interactive={true}
             />
         </Container>
     )
