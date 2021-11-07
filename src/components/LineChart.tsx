@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react"
+import React, { useRef } from "react"
 import styled from "styled-components"
 import Chart from "./Chart/Chart"
 
@@ -19,19 +19,12 @@ const LineChart = () => {
         { name: "Ethereum", date: "2017-11-01", value: 298.21 },
     ]
 
-    const data1 = [1, 2, 3, 56, 45, 44]
-    const [toggle, setToggle] = useState(false)
-
-    const handleClick = () => {
-        setToggle(!toggle)
-    }
     return (
         <Container id="chart" ref={divRef}>
-            <button onClick={handleClick}>HEl</button>
             <Chart
                 id={"chart"}
                 containerRef={divRef}
-                data={toggle ? data1 : data}
+                data={data}
                 width={400}
                 height={400}
                 margin={{ top: 0, left: 0, bottom: 0, right: 0 }}
