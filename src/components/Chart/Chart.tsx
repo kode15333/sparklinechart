@@ -1,10 +1,9 @@
 import React, { RefObject, useEffect, useRef } from "react"
-import { DataType, Margin } from "./types"
+import { ChartData, Margin, Position } from "./types"
 import { buildElement, getY } from "./util"
 import { useWindowSize } from "../useWindowSize"
 import { EventMap } from "../../lib/types"
-
-type ChartData<T = number[]> = T extends number[] ? T : DataType[]
+import { OFF_SCREEN } from "./constant"
 
 type Props<T> = {
     /** id */
@@ -23,6 +22,12 @@ type Props<T> = {
     fill?: string
     /** interactive action with cursor*/
     interactive?: boolean
+    /** onDrawStart */
+    onDrawStart?: () => void
+    /** onDraw */
+    onDraw?: () => void
+    /** onDrawEnd */
+    onDrawEnd?: () => void
 }
 
 const defaultProps = {
@@ -49,6 +54,9 @@ function Chart<T>({
     cursorWidth,
     fill,
     interactive,
+    onDrawStart,
+    onDraw,
+    onDrawEnd,
 }: Props<T> & typeof defaultProps) {
     const svgRef = useRef<SVGSVGElement>(null)
     const [containerWidth, containerHeight] = useWindowSize(containerRef)
@@ -62,9 +70,8 @@ function Chart<T>({
         svg.innerHTML = ""
 
         const values = data.map((v) => {
-            if (typeof v === "number") {
-                return v
-            }
+            if (typeof v === "number") return v
+
             return v.value
         })
 
@@ -88,12 +95,10 @@ function Chart<T>({
 
         const offset = svgWidth / lastItemIndex
 
-        const dataPoints: ((number | DataType) & {
-            index: number
-            x: number
-            y: number
-        })[] = []
+        const dataPoints: Position[] = []
+
         const pathY = getY(max, svgHeight, strokeWidth, values[0])
+
         let pathCoords = `M${spotDiameter} ${pathY}`
 
         values.forEach((value: number, index: number) => {
@@ -102,13 +107,7 @@ function Chart<T>({
 
             pathCoords += ` L ${x} ${y}`
 
-            dataPoints.push(
-                Object.assign({}, data[index], {
-                    index: index,
-                    x: x,
-                    y: y,
-                })
-            )
+            dataPoints.push({ x, y })
         })
 
         const path = buildElement("path", {
@@ -117,6 +116,7 @@ function Chart<T>({
             fill: "none",
             stroke: "blue",
         })
+
         svg.appendChild(path)
 
         if (fill?.trim()) {
@@ -134,26 +134,21 @@ function Chart<T>({
 
         if (!interactive) return
 
-        const offscreen = -1000
-
         const cursor = buildElement("line", {
             className: "sparkline--cursor",
-            x1: `${offscreen}`,
-            x2: `${offscreen}`,
-            y1: `${offscreen}`,
+            x1: OFF_SCREEN,
+            x2: OFF_SCREEN,
+            y1: OFF_SCREEN,
             y2: `${fullHeight}`,
             strokeWidth: `${cursorWidth}`,
         })
 
         const spot = buildElement("circle", {
             className: "sparkline--spot",
-            cx: `${offscreen}`,
-            cy: `${offscreen}`,
+            cx: OFF_SCREEN,
+            cy: OFF_SCREEN,
             r: `${spotRadius}`,
         })
-
-        svg.appendChild(cursor)
-        svg.appendChild(spot)
 
         const interactionLayer = buildElement("rect", {
             className: "sparkline--interaction-layer",
@@ -161,6 +156,9 @@ function Chart<T>({
             height: `${height}`,
             style: "fill: transparent; stroke: transparent; pointer-events: all;",
         })
+
+        svg.appendChild(cursor)
+        svg.appendChild(spot)
         svg.appendChild(interactionLayer)
 
         const add = <Event extends keyof EventMap<SVGSVGElement>>(
@@ -175,13 +173,13 @@ function Chart<T>({
         }
 
         const drawStart = () => {
-            console.log("drawStart")
+            if (onDrawStart) onDrawStart()
         }
 
-        const draw = (position: { x: number; y: number }) => {
-            let nextDataPoint = dataPoints.find((entry) => {
-                return entry.x >= position.x
-            })
+        const draw = (position: Position) => {
+            let nextDataPoint = dataPoints.find(
+                (entry) => entry.x >= position.x
+            )
 
             if (!nextDataPoint) {
                 nextDataPoint = dataPoints[lastItemIndex]
@@ -190,10 +188,9 @@ function Chart<T>({
             const previousDataPoint =
                 dataPoints[dataPoints.indexOf(nextDataPoint) - 1]
             let currentDataPoint
-            let halfway
 
             if (previousDataPoint) {
-                halfway =
+                const halfway =
                     previousDataPoint.x +
                     (nextDataPoint.x - previousDataPoint.x) / 2
                 currentDataPoint =
@@ -202,18 +199,23 @@ function Chart<T>({
                 currentDataPoint = nextDataPoint
             }
 
-            const xChord = "" + currentDataPoint.x
-            const yChord = "" + currentDataPoint.y
+            const xChord = currentDataPoint.x
+            const yChord = currentDataPoint.y
 
-            spot.setAttribute("cx", xChord)
-            spot.setAttribute("cy", yChord)
+            spot.setAttribute("cx", `${xChord}`)
+            spot.setAttribute("cy", `${yChord}`)
 
-            cursor.setAttribute("x1", xChord)
-            cursor.setAttribute("x2", yChord)
+            cursor.setAttribute("x1", `${xChord}`)
+            cursor.setAttribute("x2", `${yChord}`)
+            if (onDraw) onDraw()
         }
 
         const drawEnd = () => {
-            console.log("drawEnd")
+            cursor.setAttribute("x1", OFF_SCREEN)
+            cursor.setAttribute("x2", OFF_SCREEN)
+
+            spot.setAttribute("cx", OFF_SCREEN)
+            if (onDrawEnd) onDrawEnd()
         }
 
         const handleMouseMove = (e: MouseEvent) => {
@@ -244,7 +246,7 @@ function Chart<T>({
                 add("touchend", drawEnd),
             ]
 
-            // removeDrawEvent = () => canvasEvents.forEach((off) => off!())
+            // removeDrawEvent = () => events.forEach((off) => off!())
         }
 
         addDrawEvent()

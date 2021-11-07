@@ -9,3 +9,10 @@ export type DataType = {
 export type SVGElementAttr = {
     [key in keyof SVGAttributes<SVGElement>]: string
 }
+
+export type ChartData<T = number[]> = T extends number[] ? T : DataType[]
+
+export type Position = {
+    x: number
+    y: number
+}
