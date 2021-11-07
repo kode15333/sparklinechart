@@ -1,11 +1,9 @@
-import React, { useRef } from "react"
+import React, { useRef, useState } from "react"
 import styled from "styled-components"
-import { useWindowSize } from "./useWindowSize"
 import Chart from "./Chart/Chart"
 
 const LineChart = () => {
     const divRef = useRef<HTMLDivElement>(null)
-    const [width, height] = useWindowSize<HTMLDivElement>(divRef)
 
     const data = [
         { name: "Ethereum", date: "2017-01-01", value: 8.3 },
@@ -22,16 +20,25 @@ const LineChart = () => {
     ]
 
     const data1 = [1, 2, 3, 56, 45, 44]
+    const [toggle, setToggle] = useState(false)
+
+    const handleClick = () => {
+        setToggle(!toggle)
+    }
     return (
         <Container id="chart" ref={divRef}>
+            <button onClick={handleClick}>HEl</button>
             <Chart
                 id={"chart"}
-                data={data}
-                width={width}
-                height={height}
+                containerRef={divRef}
+                data={toggle ? data1 : data}
+                width={400}
+                height={400}
                 margin={{ top: 0, left: 0, bottom: 0, right: 0 }}
                 strokeWidth={2}
                 spotRadius={2}
+                fill={"rgba(244,255,255, 1)"}
+                interactive={false}
             />
         </Container>
     )
