@@ -85,7 +85,7 @@ function Chart<T>({
             margin.bottom
 
         const svgWidth =
-            fullHeight - spotDiameter * 2 - margin.right - margin.left
+            fullWidth - spotDiameter * 2 - margin.right - margin.left
 
         svg.style.transform = `translate(${margin.left}px, ${margin.top}px)`
 
