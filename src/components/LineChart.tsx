@@ -1,6 +1,7 @@
 import React, { useRef } from "react"
 import styled from "styled-components"
 import Chart from "./Chart/Chart"
+import Chart2 from "./Chart2"
 
 const LineChart = () => {
     const divRef = useRef<HTMLDivElement>(null)
@@ -22,6 +23,18 @@ const LineChart = () => {
     return (
         <Container id="chart" ref={divRef}>
             <Chart
+                id={"chart"}
+                containerRef={divRef}
+                data={data}
+                width={400}
+                height={400}
+                margin={{ top: 0, left: 0, bottom: 0, right: 0 }}
+                strokeWidth={2}
+                spotRadius={2}
+                fill={"rgba(244,255,255, 1)"}
+                interactive={true}
+            />
+            <Chart2
                 id={"chart"}
                 containerRef={divRef}
                 data={data}
