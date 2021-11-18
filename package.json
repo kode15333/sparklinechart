@@ -1,37 +1,37 @@
 {
-  "name": "@jooonho/sparkchart",
-  "version": "0.1.0",
-  "private": false,
-  "module": "dist/index.js",
+  "name": "react-svg-spark-line",
+  "version": "1.0.1",
+  "description": "Simple SVG SparkLine React component",
   "main": "dist/index.js",
-  "babel": {
-    "presets": [
-      "@babel/preset-react"
-    ]
-  },
-  "dependencies": {
-    "@jooonho/sparkchart": "^0.1.0",
-    "@types/node": "^12.0.0",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3",
-    "typescript": "^4.1.2"
-  },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "publish:npm": "rm -rf dist && mkdir dist && babel src/lib -d dist --copy-files"
+    "build": "rm -rf ./dist && tsc"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kode15333/sparklinechart.git"
   },
+  "keywords": [
+    "sparkchart",
+    "sparkLineChart",
+    "spark",
+    "line",
+    "graph",
+    "react",
+    "component",
+    "svg"
+  ],
+  "author": "Jooonho U<kode153@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "module": "dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/kode15333/sparklinechart/issues"
+  },
+  "homepage": "https://github.com/kode15333/sparklinechart#readme",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -44,8 +44,14 @@
       "last 1 safari version"
     ]
   },
+  "dependencies": {},
   "devDependencies": {
-    "@babel/cli": "^7.16.0",
-    "@babel/preset-react": "^7.16.0"
+    "@types/node": "^12.0.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "typescript": "^4.1.2"
   }
 }

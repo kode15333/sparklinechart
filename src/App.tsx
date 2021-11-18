@@ -1,5 +1,4 @@
-import React, { useRef } from "react";
-import { Chart } from "./lib";
+import { SparkChart } from "./lib";
 
 const App = () => {
 
@@ -17,11 +16,13 @@ const App = () => {
     { name: "Ethereum", date: "2017-11-01", value: 298.21 },
   ]
 
+  const data2 = [394,395,273,1,483,40,2484]
+
   return (
-        <div >
-          <Chart
+        < >
+          <SparkChart
             id={"chart"}
-            data={data}
+            data={data2}
             width={400}
             height={400}
             margin={{ top: 0, left: 0, bottom: 0, right: 0 }}
@@ -30,7 +31,7 @@ const App = () => {
             fill={"rgba(244,255,255, 1)"}
             interactive={true}
           />
-        </div>
+        </>
     )
 }
 

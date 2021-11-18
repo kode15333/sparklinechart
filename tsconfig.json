@@ -1,34 +1,25 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "strict": true,
+    "allowJs": true,
+    "noImplicitAny": true,
+    "target": "es6",
+    "module": "es6",
     "lib": [
       "dom",
-      "dom.iterable",
-      "esnext"
+      "es2015"
     ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
     "jsx": "react-jsx",
-    "typeRoots": [
-      "./index.d.ts",
-      "./node_modules/@types"
-    ],
-    "baseUrl": "./"
+    "declaration": true,
+    "moduleResolution": "node",
+    "outDir": "./dist"
   },
   "include": [
-    "src"
+    "./src/lib/*"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/*.spec.ts",
+    "./dist/**/*"
   ]
 }
