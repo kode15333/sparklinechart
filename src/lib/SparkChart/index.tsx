@@ -1,6 +1,7 @@
 import * as React from "react";
 import { buildElement, getY } from "./util";
 import { ChartData, EventMap, Margin, Position } from "./types";
+import { useWindowSize } from "./useWindowSize";
 
 const OFF_SCREEN = "-1000";
 
@@ -10,9 +11,9 @@ type Props<T> = {
   /** data*/
   data: ChartData<T>
   /** width */
-  width: number
+  width?: number
   /** height */
-  height: number
+  height?: number
   /** margin*/
   margin?: Record<Margin, number>
   /** fill */
@@ -42,25 +43,26 @@ const defaultProps = {
 };
 
 function SparkChart<T>({
-                    id,
-                    data,
-                    height,
-                    width,
-                    margin,
-                    strokeWidth,
-                    spotRadius,
-                    cursorWidth,
-                    cursorColor,
-                    fill,
-                    interactive,
-                    onDrawStart,
-                    onDraw,
-                    onDrawEnd
-                  }: Props<T> & typeof defaultProps) {
+                         id,
+                         data,
+                         height,
+                         width,
+                         margin,
+                         strokeWidth,
+                         spotRadius,
+                         cursorWidth,
+                         cursorColor,
+                         fill,
+                         interactive,
+                         onDrawStart,
+                         onDraw,
+                         onDrawEnd
+                       }: Props<T> & typeof defaultProps) {
   const svgRef = React.useRef<SVGSVGElement>(null);
+  const [containerWidth, containerHeight] = useWindowSize(svgRef);
 
-  const fullHeight = height;
-  const fullWidth = width;
+  const fullHeight = height || containerHeight;
+  const fullWidth = width || containerWidth;
 
   const sparkLine = () => {
     const svg = svgRef.current as SVGSVGElement;
@@ -250,7 +252,7 @@ function SparkChart<T>({
 
   React.useEffect(() => {
     sparkLine();
-  }, [JSON.stringify(data)]);
+  }, [containerHeight, containerWidth, JSON.stringify(data)]);
 
   return <svg id={id} width={fullWidth} height={fullHeight} ref={svgRef} />;
 }
