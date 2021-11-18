@@ -1,15 +1,12 @@
 import React, { RefObject, useEffect, useRef } from "react"
-import { ChartData, Margin, Position } from "./types"
 import { buildElement, getY } from "./util"
-import { useWindowSize } from "../useWindowSize"
-import { EventMap } from "../../types/event/types"
-import { OFF_SCREEN } from "./constant"
+import { ChartData, EventMap, Margin, Position } from "./types";
+
+const OFF_SCREEN = "-1000"
 
 type Props<T> = {
     /** id */
     id: string
-    /** containerRef */
-    containerRef: RefObject<HTMLElement>
     /** data*/
     data: ChartData<T>
     /** width */
@@ -45,7 +42,6 @@ const defaultProps = {
 
 function Chart<T>({
     id,
-    containerRef,
     data,
     height,
     width,
@@ -61,10 +57,9 @@ function Chart<T>({
     onDrawEnd,
 }: Props<T> & typeof defaultProps) {
     const svgRef = useRef<SVGSVGElement>(null)
-    const [containerWidth, containerHeight] = useWindowSize(containerRef)
 
-    const fullHeight = height || containerHeight
-    const fullWidth = width || containerWidth
+    const fullHeight = height || 0;
+    const fullWidth = width || 0;
 
     const sparkLine = () => {
         const svg = svgRef.current as SVGSVGElement

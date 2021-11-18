@@ -16,3 +16,7 @@ export type Position = {
     x: number
     y: number
 }
+
+export type EventMap<Element = HTMLElement> = Element extends Document
+  ? DocumentEventMap
+  : HTMLElementEventMap
