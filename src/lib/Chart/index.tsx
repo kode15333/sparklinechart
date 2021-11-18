@@ -1,15 +1,12 @@
 import React, { RefObject, useEffect, useRef } from "react"
-import { ChartData, Margin, Position } from "./types"
 import { buildElement, getY } from "./util"
-import { useWindowSize } from "../useWindowSize"
-import { EventMap } from "../../lib/types"
-import { OFF_SCREEN } from "./constant"
+import { ChartData, EventMap, Margin, Position } from "./types";
+
+const OFF_SCREEN = "-1000"
 
 type Props<T> = {
     /** id */
     id: string
-    /** containerRef */
-    containerRef: RefObject<HTMLElement>
     /** data*/
     data: ChartData<T>
     /** width */
@@ -34,6 +31,7 @@ const defaultProps = {
     strokeWidth: 2,
     spotRadius: 2,
     cursorWidth: 2,
+    cursorColor: "red",
     margin: {
         top: 0,
         left: 0,
@@ -44,7 +42,6 @@ const defaultProps = {
 
 function Chart<T>({
     id,
-    containerRef,
     data,
     height,
     width,
@@ -52,6 +49,7 @@ function Chart<T>({
     strokeWidth,
     spotRadius,
     cursorWidth,
+    cursorColor,
     fill,
     interactive,
     onDrawStart,
@@ -59,10 +57,9 @@ function Chart<T>({
     onDrawEnd,
 }: Props<T> & typeof defaultProps) {
     const svgRef = useRef<SVGSVGElement>(null)
-    const [containerWidth, containerHeight] = useWindowSize(containerRef)
 
-    const fullHeight = height || containerHeight
-    const fullWidth = width || containerWidth
+    const fullHeight = height || 0;
+    const fullWidth = width || 0;
 
     const sparkLine = () => {
         const svg = svgRef.current as SVGSVGElement
@@ -138,9 +135,10 @@ function Chart<T>({
             className: "sparkline--cursor",
             x1: OFF_SCREEN,
             x2: OFF_SCREEN,
-            y1: OFF_SCREEN,
+            y1: "0",
             y2: `${fullHeight}`,
             strokeWidth: `${cursorWidth}`,
+            stroke: cursorColor,
         })
 
         const spot = buildElement("circle", {
@@ -163,9 +161,10 @@ function Chart<T>({
 
         const add = <Event extends keyof EventMap<SVGSVGElement>>(
             name: Event,
-            callback: (event: EventMap<HTMLCanvasElement>[Event]) => void
+            callback: (event: EventMap<HTMLCanvasElement>[Event]) => void,
+            options?: boolean | AddEventListenerOptions
         ) => {
-            interactionLayer.addEventListener(name, callback)
+            interactionLayer.addEventListener(name, callback, options)
 
             return () => {
                 interactionLayer.removeEventListener(name, callback)
@@ -206,7 +205,7 @@ function Chart<T>({
             spot.setAttribute("cy", `${yChord}`)
 
             cursor.setAttribute("x1", `${xChord}`)
-            cursor.setAttribute("x2", `${yChord}`)
+            cursor.setAttribute("x2", `${xChord}`)
             if (onDraw) onDraw()
         }
 
@@ -236,17 +235,13 @@ function Chart<T>({
         }
 
         const addDrawEvent = () => {
-            const events = [
-                add("mousedown", drawStart),
-                add("mousemove", handleMouseMove),
-                add("mouseup", drawEnd),
-                add("mouseleave", drawEnd),
-                add("touchstart", drawStart),
-                add("touchmove", handleTouchMove),
-                add("touchend", drawEnd),
-            ]
-
-            // removeDrawEvent = () => events.forEach((off) => off!())
+            add("mousedown", drawStart)
+            add("mousemove", handleMouseMove)
+            add("mouseup", drawEnd)
+            add("mouseleave", drawEnd)
+            add("touchstart", drawStart, { capture: false, passive: true })
+            add("touchmove", handleTouchMove, { capture: false, passive: true })
+            add("touchend", drawEnd)
         }
 
         addDrawEvent()
