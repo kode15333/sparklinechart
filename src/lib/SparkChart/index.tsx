@@ -1,9 +1,9 @@
 import * as React from "react";
 import { buildElement, getY } from "./util";
 import { ChartData, EventMap, Margin, Position } from "./types";
-import { useWindowSize } from "./useWindowSize";
+import { useWindowSize } from "./hooks/useWindowSize";
+import { OFF_SCREEN } from "./constants";
 
-const OFF_SCREEN = "-1000";
 
 type Props<T> = {
   /** id */
