@@ -5,6 +5,9 @@
 
     $ npm install react-svg-spark-line
     $ yarn add react-svg-spark-line
+    
+## Demo
+[Code Sand Box](https://codesandbox.io/s/red-paper-mrx8v?file=/src/App.tsx)
 
 ## Examples
 
